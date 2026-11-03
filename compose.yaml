@@ -1,29 +1,31 @@
-
 services:
 
   frontend:
     build: ./frontend
+    env_file:
+      - ./frontend/.env
     ports:
-      - "8080:80"
+      - "5173:5173"
     depends_on:
       - backend
     restart: unless-stopped
 
   backend:
     build: ./backend
+    env_file:
+      - ./backend/.env
     environment:
       DB_HOST: db
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: muflih@123
-      DB_NAME: lab_equipment_db
+      CORS_ORIGIN: http://localhost:5173
+    ports:
+      - "5000:5000"
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
 
   db:
-    image: mariadb:11.4
+    image: mariadb:latest
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MARIADB_DATABASE: ${DB_NAME}
